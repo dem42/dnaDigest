@@ -16,34 +16,59 @@ public class RestrictionDigest {
 			j = Next[0] = -1;
 			while (i < m)
 			{
-				while (j > -1 && !wildEquals(word.charAt(i),word.charAt(j)))
+				while (j > -1 && !widerEquals(word.charAt(j),word.charAt(i)))
 					j = Next[j];
 				i++;
 				j++;
-				if (i < m && wildEquals(word.charAt(i),word.charAt(j)))
+				if (i < m && widerEquals(word.charAt(i),word.charAt(j)))
 					Next[i] = Next[j];
 				else
 					Next[i] = j;
 			}
 		}
 
-		private boolean wildEquals(char a, char b)
+		//a wildcard has to be wider than b
+		private boolean widerEquals(char a, char b)
 		{
-			if(a == 'M' || b == 'M')
-			{
-				return (a=='A')||(a=='C')||(b=='A')||(b=='C')||( (a=='M')&&(b=='M') );
-			}
-			if(a == 'R' || b == 'R')
-			{
-				return (a=='A')||(a=='G')||(b=='A')||(b=='G');
-			}
-			if(a == 'X' || b == 'X' || a == 'N' || b == 'N')
-			{
+			if(a == b)
 				return true;
-			}
+			
+			if(a == 'M')
+				return (b=='A')||(b=='C');
+			
+			if(a == 'R')
+				return (b=='A')||(b=='G');
+			
+			if(a == 'W')
+				return (b=='A')||(b=='T');
+			
+			if(a == 'S')
+				return (b=='C')||(b=='G');
+			
+			if(a == 'Y')
+				return (b=='C')||(b=='T');
+			
+			if(a == 'K')
+				return (b=='G')||(b=='T');
+			
+			if(a == 'V')
+				return (b=='A')||(b=='C')||(b=='G')||(b=='M')||(b=='R')||(b=='S');
+			
+			if(a == 'H')
+				return (b=='A')||(b=='C')||(b=='T')||(b=='M')||(b=='W')||(b=='Y');
+			
+			if(a == 'D')
+				return (b=='A')||(b=='G')||(b=='T')||(b=='R')||(b=='W')||(b=='K');
+			
+			if(a == 'B')
+				return (b=='C')||(b=='G')||(b=='T')||(b=='S')||(b=='Y')||(b=='K');
+			
+			if(a == 'N' || a == 'X')
+				return true;
+			
 			return false;
 		}
-
+		
 		List<Integer> cuts(String word, String stringToSearch)
 		{
 			int i, j;
@@ -58,7 +83,8 @@ public class RestrictionDigest {
 			i = j = 0;
 			while (j < n)
 			{
-				while (i > -1 && !wildEquals(word.charAt(i),stringToSearch.charAt(j)))
+				//debug(i,j);
+				while (i > -1 && !widerEquals(word.charAt(i),stringToSearch.charAt(j)))
 					i = kmpNext[i];
 				i++;
 				j++;
@@ -92,9 +118,11 @@ public class RestrictionDigest {
 		//debug(res);
 		//List<Integer> res2 = kmp.cuts("aaaa", "aaaaa");
 		//debug(res2);
-		List<Integer> r2 = kmp.cuts("AATTAMMAG", "AATTACCAG");
+		List<Integer> r2 = kmp.cuts("AATTAMMAG", "AATTACCAGAAATAATTACCAATTAATTAATTACCAG");
 		List<Integer> r = kmp.cuts("AATTAMMAG", "AATTAGGAATTACCAG");
+		List<Integer> r3 = kmp.cuts("NNMM", "AATTAGGAATTACCAG");
 		debug(r2);
 		debug(r);
+		debug(r3);
 	}
 }
